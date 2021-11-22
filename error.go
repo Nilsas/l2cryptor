@@ -15,10 +15,16 @@ var (
 		return fmt.Errorf("block  with key %d is't detected in decpypted blocks map", n)
 	}
 
+	errDecryptBlockTooShort = func(x int) error {
+		return fmt.Errorf("decrypted block is too small %d", x)
+	}
+
+	errDecryptBlockTooLarge = errors.New("size in block header more than meaningful block part")
+
 	errReadBlockMessageTooLong = func(spec, actual int) error {
 		return fmt.Errorf("decrypt error: specified payload length - %d; actual - %d", spec, actual)
 	}
 
 	errCommonDecompressionWrongSize = errors.New("decompression error. wrong decompressed size")
-	errCompressedDataBlockTooSmall  = errors.New("compressed data block too small")
+	errCompressedDataBlockTooSmall  = errors.New("compressed data block is too small")
 )

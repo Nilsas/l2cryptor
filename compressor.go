@@ -12,8 +12,9 @@ func decompress(comp []byte) ([]byte, error) {
 		return nil, errCompressedDataBlockTooSmall
 	}
 
+	// TODO: выяснить почему не всегда совпадает указанный размер с действительным
 	// first 4 bytes is size of decompressed data in binary 32-bit little endian
-	sz := binary.LittleEndian.Uint32(comp[:4])
+	// sz := binary.LittleEndian.Uint32(comp[:4])
 
 	z, err := zlib.NewReader(bytes.NewBuffer(comp[4:]))
 	if err != nil {
@@ -24,13 +25,15 @@ func decompress(comp []byte) ([]byte, error) {
 	o := bytes.NewBuffer([]byte{})
 	io.Copy(o, z)
 
-	if len(o.Bytes()) != int(sz) {
-		return nil, errCommonDecompressionWrongSize
-	}
+	// TODO: выяснить почему не всегда совпадает указанный размер с действительным
+	// if len(o.Bytes()) != int(sz) {
+	// 	return nil, errCommonDecompressionWrongSize
+	// }
 
 	return o.Bytes(), nil
 }
 
+// unused now
 func compress(data []byte) ([]byte, error) {
 	comp := bytes.Buffer{}
 	// write header with data size

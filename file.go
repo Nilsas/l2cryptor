@@ -10,6 +10,8 @@ import (
 	"golang.org/x/text/encoding/unicode"
 )
 
+var Debug bool = false
+
 type lineageFileInfo struct {
 	os.FileInfo
 	l2Version     int
@@ -78,7 +80,7 @@ func openLineageFile(filename string) (content []byte, info lineageFileInfo, err
 		err = errInputFileFailDetectVersion
 		return
 	}
-
+	content = buf[28:]
 	return
 }
 
@@ -93,24 +95,30 @@ func DecryptFile(input string, key RSAKey, output string) error {
 		return err
 	}
 
-	fmt.Println("Input file:", info.Name(), "| Version:", info.l2Version)
-	fmt.Println("Content length:", info.contentLength)
-	fmt.Println("RSA blocks count:", info.blocksCount())
-	fmt.Print("Status: decrypt ")
+	if Debug {
+		fmt.Println("Input file:", info.Name(), "| Version:", info.l2Version)
+		fmt.Println("Content length:", info.contentLength)
+		fmt.Println("RSA blocks count:", info.blocksCount())
+		fmt.Print("Status: decrypt ")
+	}
 
 	comp, err := decryptSequence(cipher, key)
 	if err != nil {
 		return err
 	}
 
-	fmt.Print("> decompress ")
+	if Debug {
+		fmt.Print("> decompress ")
+	}
 
 	data, err := decompress(comp)
 	if err != nil {
 		return err
 	}
 
-	fmt.Print("> save ")
+	if Debug {
+		fmt.Print("> save ")
+	}
 
 	if output == "" {
 		output = fmt.Sprintf("%s/dec.%s", filepath.Dir(input), filepath.Base(input))
@@ -118,6 +126,9 @@ func DecryptFile(input string, key RSAKey, output string) error {
 	if err := os.WriteFile(output, data, 0755); err != nil {
 		return err
 	}
-	fmt.Println("> succesful saved to >", output)
+	if Debug {
+		fmt.Println("> succesful saved to >", output)
+	}
+
 	return nil
 }

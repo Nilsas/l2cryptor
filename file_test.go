@@ -6,8 +6,6 @@ import (
 )
 
 func TestFileInfo(t *testing.T) {
-	t.SkipNow()
-
 	os.Chdir("original_files")
 	defer os.Chdir("..")
 
