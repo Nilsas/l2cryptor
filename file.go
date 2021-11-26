@@ -10,8 +10,6 @@ import (
 	"golang.org/x/text/encoding/unicode"
 )
 
-var Debug bool = false
-
 type lineageFileInfo struct {
 	os.FileInfo
 	l2Version     int
