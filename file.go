@@ -89,17 +89,9 @@ func openLineageFile(filename string) (content []byte, info lineageFileInfo, err
 // `key` - RSA key interface (must contain implementation for modulus N() and private exponent E())
 // `output` - filename for save decrypted data. If empty, it will looks like 'dec.`input`'
 func DecryptFile(input string, key RSAKey, output string) error {
-	defer fmt.Println()
-	cipher, info, err := openLineageFile(input)
+	cipher, _, err := openLineageFile(input)
 	if err != nil {
 		return err
-	}
-
-	if Debug {
-		fmt.Println("Input file:", info.Name(), "| Version:", info.l2Version)
-		fmt.Println("Content length:", info.contentLength)
-		fmt.Println("RSA blocks count:", info.blocksCount())
-		fmt.Print("Status: decrypt ")
 	}
 
 	comp, err := decryptSequence(cipher, key)
@@ -107,17 +99,9 @@ func DecryptFile(input string, key RSAKey, output string) error {
 		return err
 	}
 
-	if Debug {
-		fmt.Print("> decompress ")
-	}
-
 	data, err := decompress(comp)
 	if err != nil {
 		return err
-	}
-
-	if Debug {
-		fmt.Print("> save ")
 	}
 
 	if output == "" {
@@ -125,9 +109,6 @@ func DecryptFile(input string, key RSAKey, output string) error {
 	}
 	if err := os.WriteFile(output, data, 0755); err != nil {
 		return err
-	}
-	if Debug {
-		fmt.Println("> succesful saved to >", output)
 	}
 
 	return nil
